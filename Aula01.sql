@@ -20,3 +20,5 @@ WHERE descricao = 'smartphone';
 
 DELETE FROM produto
 WHERE codigo = 1
+
+SELECT * FROM produto;
