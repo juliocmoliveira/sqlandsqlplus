@@ -72,19 +72,19 @@ AND nome LIKE '%a'
 AND codigo > 8;
 =======================================================================
 -- Syntaxe
-D.Definition.L.
-CREATE TABLE tableExemplo (campoExemplo INTEGER PRIMARY KEY)
-ALTER TABLE tabelaExemplo DROP COLUMN colunaExemplo
-ALTER TABLE tabelaExemplo ADD COLUMN colunaExemplo VARCHAR(20)
-DROP TABLE tableExemplo
+-- D.Definition.L.
+-- CREATE TABLE tableExemplo (campoExemplo INTEGER PRIMARY KEY)
+-- ALTER TABLE tabelaExemplo DROP COLUMN colunaExemplo
+-- ALTER TABLE tabelaExemplo ADD COLUMN colunaExemplo VARCHAR(20)
+-- DROP TABLE tableExemplo
 
-D.Manipulation.L.
-INSERT INTO tabelaExemplo (campo1, campo2) VALUES (valor1, valor2)
-UPDATE tabelaExemplo SET campoExemplo = valorExemplo WHERE condiçãoExemplo
-DELETE FROM tabelaExemplo WHERE condiçãoExemplo
+-- D.Manipulation.L.
+-- INSERT INTO tabelaExemplo (campo1, campo2) VALUES (valor1, valor2)
+-- UPDATE tabelaExemplo SET campoExemplo = valorExemplo WHERE condiçãoExemplo
+-- DELETE FROM tabelaExemplo WHERE condiçãoExemplo
 
-D.Query.L.
-SELECT campoExemplo FROM tabelaExemplo WHERE condiçãoExemplo
+-- D.Query.L.
+-- SELECT campoExemplo FROM tabelaExemplo WHERE condiçãoExemplo
 =======================================================================
 CREATE TABLE escolaridade(
 	id INTEGER,
@@ -159,8 +159,47 @@ WHERE c.id = 1 AND e.id = 4
 
 =======================================================================
 
-SELECT COUNT(p.nome), c.descricao AS cidade, e.descricao AS escolaridade FROM pessoa p
+SELECT COUNT(*) FROM pessoa p
 JOIN cidade c ON p.cidadeid = c.id
 JOIN escolaridade e ON p.escolaridadeid = e.id
 WHERE c.id = 3 AND e.id = 3
 
+=======================================================================
+DROP TABLE genero
+DROP TABLE livro
+
+CREATE TABLE genero (
+	id INTEGER,
+	descricao varchar(20),
+	CONSTRAINT pk_genero PRIMARY KEY (id)
+)
+
+CREATE TABLE livro (
+	id INTEGER GENERATED ALWAYS AS IDENTITY,
+	titulo VARCHAR(50),
+	autor VARCHAR(40),
+	ano_publicado INTEGER,
+	preco NUMERIC(6,2),
+	quantidade_estoque INTEGER,
+	generoid INTEGER NOT NULL,
+	CONSTRAINT pk_livro PRIMARY KEY (id),
+	CONSTRAINT fk_genero FOREIGN KEY (generoid) REFERENCES genero (id)
+)
+
+SELECT * FROM genero
+SELECT * FROM livro
+
+INSERT INTO genero (id, descricao)
+VALUES 	(1, 'Fantasia'),
+		(2, 'Distopia'),
+		(3, 'Romance'),
+		(4, 'Infantil'),
+		(5, 'Historia')
+
+-- Inserindo livros na tabela 'livro'
+INSERT INTO livro (titulo, autor, ano_publicado, preco, quantidade_estoque, generoid) 
+VALUES 	('O Senhor dos Anéis', 'J.R.R. Tolkien', 1954, 59.90, 10, 1),  -- Exemplo de Livro de Fantasia (assumindo generoid = 1)
+		('1984', 'George Orwell', 1949, 39.90, 15, 2),                  -- Exemplo de Livro de Distopia (assumindo generoid = 2)
+		('Dom Casmurro', 'Machado de Assis', 1899, 29.90, 20, 3),        -- Exemplo de Livro de Romance (assumindo generoid = 3)
+		('Harry Potter e a Pedra Filosofal', 'J.K. Rowling', 1997, 49.90, 30, 1),  -- Exemplo de Livro de Fantasia (assumindo generoid = 1)
+		('O Pequeno Príncipe', 'Antoine de Saint-Exupéry', 1943, 19.90, 25, 4); -- Exemplo de Livro Infantil (assumindo generoid = 4)
