@@ -18,6 +18,9 @@ CREATE TABLE funcionarios (
 	departamento VARCHAR(30)
 );
 
+ALTER TABLE funcionarios
+ADD COLUMN data_nascimento DATE;
+
 SELECT * FROM funcionarios
 WHERE departamento = 'tecnologia';
 
@@ -241,13 +244,34 @@ INSERT INTO turno (descricao) VALUES ('noturno');
 
 SELECT * FROM curso;
 INSERT INTO curso (descricao, cargaHoraria, turnoid) 
-VALUES ('ciencia da computação', '200', 1);
+VALUES ('ciencias humanas', '100', 1);
 
 SELECT * FROM turma;
 INSERT INTO turma (cursoid, estudanteid) VALUES ('1', '2');
 
 
+CREATE TABLE departamento (
+	id INTEGER Generated Always AS IDENTITY PRIMARY KEY,
+	descricao VARCHAR(100)
+)
+
+CREATE TABLE funça (
+	id INTEGER Generated Always AS IDENTITY PRIMARY KEY,
+	nome VARCHAR(100),
+	data_nascimento DATE,
+	salario_anual DECIMAL(10, 2),
+	departamentoID INTEGER NOT NULL,
+	CONSTRAINT fk_funça_departamneto FOREIGN KEY (departamentoID) REFERENCES departamento(id) 
+)
+
+SELECT * FROM departamento;
+
+INSERT INTO departamento (descricao)
+VALUES ('contaveis')
 
 
+SELECT * FROM funça;
 
+INSERT INTO funça (nome, data_nascimento, salario_anual, departamentoID)
+VALUES ('cleitinho', '2004-1-15', '1200', '1')
 
