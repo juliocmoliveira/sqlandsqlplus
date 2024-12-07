@@ -191,3 +191,63 @@ CREATE TABLE livro (
 
 SELECT * FROM livro;
 DROP TABLE genero;
+
+
+CREATE TABLE sexo (
+	id INTEGER Generated Always AS IDENTITY PRIMARY KEY,
+	descricao VARCHAR(20)
+)
+
+CREATE TABLE estudante (
+	id INTEGER Generated Always AS IDENTITY PRIMARY KEY,
+	nome VARCHAR(100),
+	idade INTEGER,
+	sexoid INTEGER NOT NULL,
+	email VARCHAR(100),
+	telefone VARCHAR(50),
+	CONSTRAINT fk_estadante_sexo FOREIGN KEY (sexoid) REFERENCES sexo(id)
+)
+
+CREATE TABLE turno (
+	id INTEGER Generated Always AS IDENTITY PRIMARY KEY,
+	descricao VARCHAR(20)
+)
+
+CREATE TABLE curso (
+	id INTEGER Generated Always AS IDENTITY PRIMARY KEY,
+	descricao VARCHAR(80),
+	cargaHoraria DECIMAL(10, 2),
+	turnoid INTEGER NOT NULL,
+	CONSTRAINT fk_curso_turno FOREIGN KEY (turnoid) REFERENCES turno(id)
+)
+
+CREATE TABLE turma (
+    cursoid INT,
+    estudanteid INT,
+ 	PRIMARY KEY (estudanteid, cursoid),
+    FOREIGN KEY (cursoid) REFERENCES curso(id),
+    FOREIGN KEY (estudanteid) REFERENCES estudante(id)
+);
+
+SELECT * FROM estudante;
+INSERT INTO estudante (nome, idade, sexoid, email, telefone)
+VALUES ('mohammed', '25', '1', 'email@email.com', '666999000')
+
+SELECT * FROM sexo;
+INSERT INTO sexo (descricao) VALUES ('não sei');
+
+SELECT * FROM turno;
+INSERT INTO turno (descricao) VALUES ('noturno');
+
+SELECT * FROM curso;
+INSERT INTO curso (descricao, cargaHoraria, turnoid) 
+VALUES ('ciencia da computação', '200', 1);
+
+SELECT * FROM turma;
+INSERT INTO turma (cursoid, estudanteid) VALUES ('1', '2');
+
+
+
+
+
+
