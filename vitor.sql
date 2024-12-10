@@ -1,9 +1,3 @@
-CREATE TABLE produto (
-	codigo INTEGER PRIMARY KEY,
-	descricao VARCHAR(50) NOT NULL,
-	preco NUMERIC(5,2)
-);
-
 SELECT * FROM produto;
 
 ALTER TABLE produto DROP COLUMN descricao;
@@ -274,4 +268,48 @@ SELECT * FROM funça;
 
 INSERT INTO funça (nome, data_nascimento, salario_anual, departamentoID)
 VALUES ('cleitinho', '2004-1-15', '1200', '1')
+
+------------------------------------------------------------------
+CREATE TABLE capital (
+	id INTEGER Generated Always AS IDENTITY PRIMARY KEY,
+	paisID INTEGER NOT NULL,
+	nome VARCHAR(60),
+	temperatura VARCHAR(10)
+);
+
+CREATE TABLE fronteiras (
+	id INTEGER Generated Always AS IDENTITY PRIMARY KEY,
+	paisID_1 INTEGER NOT NULL,
+	paisID_2 INTEGER NOT NULL
+);
+
+
+CREATE TABLE paises (
+	id INTEGER Generated Always AS IDENTITY PRIMARY KEY,
+	nome VARCHAR(60),
+	lingua_mais_falada VARCHAR(60),
+	continente VARCHAR(20),
+	capitalID INTEGER,
+	CONSTRAINT fk_paises_capital FOREIGN KEY (capitalID) REFERENCES capital(id),
+);
+
+INSERT INTO paises (nome, lingua_mais_falada, continente) 
+VALUES ('China', 'Mandarim', 'Ásia');
+
+INSERT INTO capital (paisID, nome, temperatura)
+VALUES ('2', 'Pequim', '11°')
+
+INSERT INTO fronteiras (paisID_1, paisID_2)
+VALUES ('1', '2')
+
+SELECT * FROM paises;
+SELECT * FROM capital;
+SELECT * FROM fronteiras;
+DELETE FROM paises 
+WHERE id = 3
+
+UPDATE paises SET fronteirasID = 2 WHERE ID = 1
+
+ALTER TABLE paises
+DROP COLUMN fronteirasID;
 
