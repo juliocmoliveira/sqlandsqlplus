@@ -63,7 +63,7 @@ SELECT * FROM funcionario;
 CREATE TABLE funcionario (
 	id INTEGER GENERATED ALWAYS AS IDENTITY,
 	nome VARCHAR(60),
-	data_nascimento VARCHAR(12),
+	data_nascimento DATE,
 	salario_anual NUMERIC(7,2),
 	departamento_id INTEGER NOT NULL,
 	CONSTRAINT pk_funcionario PRIMARY KEY (id),
@@ -165,16 +165,91 @@ VALUES
     ('Amanda Rocha', '1988-09-05', 60000.00, 10);
 	
 =======================================================================
--- Aula 04 Atividade
+-- Aula 04/05 Atividade
 =======================================================================
+-- Contagem de Funcionarios
 SELECT COUNT(*) FROM funcionario
 =======================================================================
-SELECT AVG(salario_anual) FROM funcionario 
+-- Média Salarial do Departamento de 'Desenvolvimento'
+SELECT AVG(f.salario_anual) FROM funcionario f, departamento d WHERE f.departamento_id = d.id AND d.descricao LIKE '%Desenvolvimento%'
 =======================================================================
-SELECT MIN(salario_anual),MAX(salario_anual) FROM funcionario
+-- Saláro Máximo e Mínimo
+SELECT MAX(salario_anual),MIN(salario_anual) FROM funcionario
 =======================================================================
+-- Quantidade de Departamentos
 SELECT COUNT(departamento_id) FROM funcionario 
 =======================================================================
+-- Salário Total do Departamento de 'Suporte'
+SELECT SUM(salario_anual) FROM funcionario WHERE departamento_id = 3
+=======================================================================
+-- Salário Total dos Departamentos
+	SELECT SUM(f.salario_anual), departamento_id, descricao FROM funcionario f, departamento d
+	WHERE f.departamento_id = d.id
+	GROUP BY departamento_id, descricao
+	ORDER BY departamento_id ASC
+=======================================================================
+-- Departamento com maior Sálario
+SELECT  f.departamento_id, d.descricao, ROUND(MAX(f.salario_anual)) FROM funcionario f
+JOIN departamento d ON f.departamento_id = d.id
+WHERE f.salario_anual = (SELECT MAX(salario_anual) FROM funcionario)
+GROUP BY f.departamento_id, d.descricao 
+ORDER BY f.departamento_id ASC
+-- BASE
+SELECT MAX(f.salario_anual) AS Salario, f.departamento_id, d.descricao FROM funcionario f, departamento d
+WHERE f.departamento_id = d.id
+GROUP BY f.departamento_id, d.descricao 
+=======================================================================
+-- Salário mensal do Departamento de 'Desenvolvimento'	
+SELECT f.nome, Round(f.salario_anual/12, 2) AS salario_mensal, d.descricao  FROM funcionario f
+JOIN departamento d ON f.departamento_id = d.id
+where d.descricao LIKE '%Desenvolvimento%'
+ORDER BY salario_mensal DESC
+=======================================================================
+-- Média Salarial por Departamento
+SELECT ROUND(AVG(salario_anual),2), f.departamento_id, d.descricao FROM funcionario f
+JOIN departamento d ON f.departamento_id = d.id
+GROUP BY f.departamento_id, d.descricao
+ORDER BY ASC
+=======================================================================
+-- Funcionário mais jovem e mais velho
+SELECT f.nome, ((CURRENT_DATE - f.data_nascimento)/ 365) AS idade FROM funcionario f
+WHERE data_nascimento = (SELECT MAX(data_nascimento) AS mais_novo FROM funcionario f)
+OR data_nascimento = (SELECT Min(data_nascimento) AS mais_velho FROM funcionario f)
+=======================================================================
+-- Departamento com Maior Média Salarial
+SELECT  f.departamento_id, d.descricao, ROUND(AVG(f.salario_anual)) FROM funcionario f
+JOIN departamento d ON f.departamento_id = d.id
+WHERE f.salario_anual = (SELECT AVG(f.salario_anual) FROM funcionario f )
+GROUP BY f.departamento_id, d.descricao 
+ORDER BY f.departamento_id ASC
+=======================================================================
+-- Funcionários com Salário Acima da Média
+SELECT nome, salario_anual, (SELECT ROUND(AVG(salario_anual), 2) FROM funcionario) AS corte FROM funcionario
+WHERE salario_anual > (SELECT AVG(salario_anual) FROM funcionario)
+=======================================================================
+-- Funcionario com o Maior Salario
+SELECT MAX(salario_anual), nome FROM funcionario 
+WHERE salario_anual = (SELECT MAX(salario_anual) FROM funcionario)
+GROUP BY nome
+=======================================================================
+-- 	PAG 10 EXE
+SELECT VALOR.CONTADOR, VALOR.descricao 
+FROM (
+		SELECT departamento_id, descricao, COUNT(f.id) AS CONTADOR FROM funcionario f
+		JOIN departamento d ON f.departamento_id = d.id
+		GROUP BY departamento_id, descricao
+	 ) AS VALOR 
+WHERE VALOR.CONTADOR >= 4
+=======================================================================
+-- PAG 11 EXE
+SELECT VALOR.descricao, VALOR.Total_Funcionarios, 
+FROM (
+		SELECT departamento_id, descricao, COUNT(f.id) AS Total_Funcionarios FROM funcionario f
+		JOIN departamento d ON f.departamento_id = d.id
+		GROUP BY departamento_id, descricao
+	 ) AS VALOR 
 
+=======================================================================
+-- PAG 12 EXE
 
-
+=======================================================================
