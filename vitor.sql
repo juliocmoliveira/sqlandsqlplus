@@ -259,15 +259,111 @@ CREATE TABLE funça (
 )
 
 SELECT * FROM departamento;
+SELECT * FROM funça;
 
 INSERT INTO departamento (descricao)
 VALUES ('contaveis')
 
-
+DELETE FROM funça WHERE ID = 2;
 SELECT * FROM funça;
 
-INSERT INTO funça (nome, data_nascimento, salario_anual, departamentoID)
-VALUES ('cleitinho', '2004-1-15', '1200', '1')
+INSERT INTO funça (nome, data_nascimento, salario_mensal, departamentoID)
+VALUES 
+	('cleitinho', '2004-1-15', '1200', '1'),
+	('amanda', '1993-4-25', '2900', '2'),
+	('enzo', '2012-12-24', '90000', '3'),
+	('clóvis', '2001-7-11', '1000', '3'),
+	('fulano', '1974-2-27', '8000', '3'),
+	('siclano', '1974-2-27', '8000', '3');
+	
+ALTER TABLE funça RENAME COLUMN salario_anual to salario_mensal;
+
+----------------------contar funcionários-------------------------
+SELECT COUNT(*) FROM funça
+
+----------------------numero de departamento----------------------
+SELECT COUNT(*) FROM departamento
+
+----------------------média salarial devs---------------------------
+SELECT departamentoID, AVG(salario_mensal) AS media_salarial
+FROM funça
+WHERE departamentoID = 3
+GROUP BY departamentoID;
+
+----------------------salário max e min---------------------------
+SELECT MAX(salario_mensal) AS salario_rico,
+       MIN(salario_mensal) AS salario_coitado
+FROM funça;
+
+----------------------salário de geral----------------------------
+SELECT SUM(salario_mensal) AS total_grana
+FROM funça
+WHERE departamentoID = 3;
+
+----------------------salário por departamento--------------------
+SELECT departamentoID, SUM(salario_mensal) 
+AS total_grana_departamento
+FROM funça
+GROUP BY departamentoID;
+
+----------------------departamento com maior salario--------------
+SELECT departamentoID, MAX(salario_mensal) AS maior_salario
+FROM funça
+GROUP BY departamentoID
+ORDER BY maior_salario DESC
+LIMIT 1;
+
+----------------------media por departamento----------------------
+SELECT departamentoID, round(AVG(salario_mensal),2) FROM funça f
+INNER JOIN departamento d
+ON f.departamentoID = d.id
+GROUP BY departamentoID
+ORDER BY departamentoID ASC
+
+---------------------achar o funcionario mais velho e mais novo---
+SELECT f.nome AS nome,( (CURRENT_DATE - f.data_nascimento) / 365) AS idade FROM funça f
+WHERE data_nascimento = (SELECT MAX(data_nascimento) AS mais_novo FROM funça f)
+OR data_nascimento = (SELECT MIN(data_nascimento) AS mais_velho FROM funça f)
+
+---------------------departamento com maior media------------------
+SELECT departamentoID, SUM(salario_mensal) AS maior_media
+FROM funça
+GROUP BY departamentoID
+LIMIT 1;
+
+---------------------funcionarios com salario acima da media------
+SELECT nome, salario_mensal
+FROM funça
+WHERE salario_mensal > 5000
+
+---------------------funcionario mais rico------------------------
+SELECT nome, salario_mensal 
+FROM funça
+WHERE salario_mensal = (SELECT MAX(salario_mensal) FROM funça);
+
+---------------------relatório departamento com + de 3 funça------
+SELECT departments.descricao 
+FROM (	select d.descricao, count(d.id) as contagem, d.id 
+	  	from funça F
+		inner join departamento D
+		on F.departamentoID = d.id
+		group by d.id
+	 ) as departments
+WHERE departments.contagem > 3
+
+--------------------resumo de funça por departeamento-------------
+SELECT funcionarios.descricao
+FROM ( select f.descricao, count(f.id) as numero, f.id from funça f) as funcionarios_qt, 
+
+	(select departamentoID, round(avg(salario_mensal),2) from funça f
+		inner join departamento d
+		on f.departamentoID = d.id
+		group by departamentoID) as salario_medio,
+		
+		(select f.nome as nome,( (current_date - f.data_nascimento) / 365) as idade from funça f
+		where data_nascimento = (select max(data_nascimento) as mais_novo from funça f)
+		or data_nascimento = (select min(data_nascimento) as mais_velho from funça f)) as novo_velho
+WHERE funcionarios.numero
 
 ------------------------------------------------------------------
 CREATE TABLE capital (
@@ -290,26 +386,70 @@ CREATE TABLE paises (
 	lingua_mais_falada VARCHAR(60),
 	continente VARCHAR(20),
 	capitalID INTEGER,
-	CONSTRAINT fk_paises_capital FOREIGN KEY (capitalID) REFERENCES capital(id),
+	CONSTRAINT fk_paises_capital FOREIGN KEY (capitalID) REFERENCES capital(id)
 );
 
 INSERT INTO paises (nome, lingua_mais_falada, continente) 
-VALUES ('China', 'Mandarim', 'Ásia');
+VALUES 
+	('rússia', 'russo', 'europa'),
+	('polónia', 'polonês', 'europa'),
+	('china', 'mandarim', 'ásia'),
+	('japão', 'japonês', 'ásia'),
+	('ucrânia', 'ucraniano', 'europa'),
+	('lituania', 'lituano', 'europa'),
+	('hungria', 'hungaro', 'europa'),
+	('coréia do sul', 'coreano', 'ásia');
+
 
 INSERT INTO capital (paisID, nome, temperatura)
-VALUES ('2', 'Pequim', '11°')
+VALUES 
+	('1', 'moscou', '-5°'),
+	('2', 'Varsóvia', '11°'),
+	('3', 'pequim', '-5°'),
+	('4', 'toquio', '10°'),
+	('5', 'kiev', '-4°'),
+	('6', 'vilnius', '-4°'),
+	('7', 'budapeste', '-2°'),
+	('8', 'seul', '0°');
 
 INSERT INTO fronteiras (paisID_1, paisID_2)
-VALUES ('1', '2')
+VALUES 
+	('1', '2'),
+	('1', '3'),
+	('1', '5'),
+	('1', '6'),
+	('7', '5'),
+	('5', '2'),
+	('2', '6');
 
 SELECT * FROM paises;
 SELECT * FROM capital;
 SELECT * FROM fronteiras;
-DELETE FROM paises 
-WHERE id = 3
+DELETE FROM paises WHERE id = 3
 
-UPDATE paises SET fronteirasID = 2 WHERE ID = 1
+UPDATE paises 
+SET capitalID = 1 WHERE ID = 1
+	
+UPDATE paises 
+SET capitalID = 2 WHERE ID = 2
+	
+UPDATE paises 
+SET capitalID = 3 WHERE ID = 3
+	
+UPDATE paises 
+SET capitalID = 4 WHERE ID = 4
+	
+UPDATE paises 
+SET capitalID = 5 WHERE ID = 5
+	
+UPDATE paises 
+SET capitalID = 6 WHERE ID = 6
+	
+UPDATE paises 
+SET capitalID = 7 WHERE ID = 7
+	
+UPDATE paises 
+SET capitalID = 8 WHERE ID = 8
 
 ALTER TABLE paises
 DROP COLUMN fronteirasID;
-
