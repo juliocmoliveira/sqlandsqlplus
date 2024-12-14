@@ -216,10 +216,10 @@ SELECT f.nome, ((CURRENT_DATE - f.data_nascimento)/ 365) AS idade FROM funcionar
 WHERE data_nascimento = (SELECT MAX(data_nascimento) AS mais_novo FROM funcionario f)
 OR data_nascimento = (SELECT Min(data_nascimento) AS mais_velho FROM funcionario f)
 =======================================================================
--- Departamento com Maior Média Salarial
+-- Departamento com Maior Média Salarial INCOMPLETO
 SELECT  f.departamento_id, d.descricao, ROUND(AVG(f.salario_anual)) FROM funcionario f
 JOIN departamento d ON f.departamento_id = d.id
-WHERE f.salario_anual = (SELECT AVG(f.salario_anual) FROM funcionario f )
+-- WHERE f.salario_anual = (SELECT AVG(f.salario_anual) FROM funcionario f )
 GROUP BY f.departamento_id, d.descricao 
 ORDER BY f.departamento_id ASC
 =======================================================================
